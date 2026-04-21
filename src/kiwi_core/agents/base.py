@@ -1,6 +1,20 @@
 """
 Base agent class for Kiwi's multi-agent architecture.
 All specialist agents inherit from this.
+
+This BaseAgent is intentionally minimal — a single-turn Claude call
+with a shared system prompt and messages interface. It has no
+persistence, no cost cap, no tool-use, and no dependencies beyond
+anthropic. It's consumed by Kiwi, Calsanova's /kiwi research
+endpoints, and RWQL.
+
+Calsanova's production harness at
+backend/app/agents/base.py (in the calsanova repo) is an intentionally
+separate fork with a 4-phase pipeline (analyze/critique/refine/persist),
+retry/backoff, tool-use loop, cost-cap enforcement, and AIInsight +
+AgentRunLog + AIUsageLog persistence. It does NOT inherit from this
+class. Do not merge the two — see Calsanova's base.py docstring for
+the rationale.
 """
 
 from abc import ABC, abstractmethod
