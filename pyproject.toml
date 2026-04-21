@@ -9,6 +9,8 @@ packages = [{include = "kiwi_core", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"
+anthropic = "^0.80.0"
+httpx = "^0.28.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.0"
