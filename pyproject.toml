@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kiwi-core"
-version = "0.2.0"
+version = "0.2.1"
 description = "Shared Kiwi tools, agents, and memory primitives — used by nellymarq/kiwi, nellymarq/calsanova, nellymarq/rwql."
 authors = ["Nelly Marques <nmarques1113@gmail.com>"]
 readme = "README.md"
