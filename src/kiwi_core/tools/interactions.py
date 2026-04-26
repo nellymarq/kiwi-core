@@ -575,6 +575,102 @@ INTERACTION_DB: list[Interaction] = [
         recommendation="Standard doses (100-300mg/d) likely safe. Monitor at cortisol-protocol doses (600-800mg/d) if on anticoagulants.",
         sources=["Theoretical; limited clinical data"],
     ),
+
+    # ── Tier 19: Contributed from Calsanova app/supplements/extra_interactions.py 2026-04-26 ──
+    # 7 pairs that the Calsanova /stacking UI surfaced via a backend gap-fill
+    # module. Promoted upstream so the gap-fill module can be deleted and
+    # interaction lookups have a single canonical source. Evidence tier 🟡
+    # (Moderate) on all rows — established mechanism, no landmark RCT cited
+    # inline; clinical review may upgrade individual rows later.
+    Interaction(
+        compound_a="iron", compound_b="vitamin d",
+        severity="caution",
+        mechanism=(
+            "Vitamin D enhances calcium absorption; calcium then competes with "
+            "iron for the same divalent metal transporter. Effect is indirect."
+        ),
+        evidence_tier="🟡",
+        recommendation=(
+            "Take vitamin D and iron 2+ hours apart when both are supplemented "
+            "at therapeutic doses."
+        ),
+    ),
+    Interaction(
+        compound_a="zinc", compound_b="calcium",
+        severity="caution",
+        mechanism=(
+            "High-dose calcium reduces zinc absorption by competing for "
+            "divalent metal transporters in the small intestine."
+        ),
+        evidence_tier="🟡",
+        recommendation=(
+            "Take zinc and calcium at separate meals; especially relevant when "
+            "calcium ≥ 600 mg per dose."
+        ),
+    ),
+    Interaction(
+        compound_a="vitamin d", compound_b="calcium",
+        severity="synergistic",
+        mechanism=(
+            "Vitamin D upregulates intestinal calcium binding protein "
+            "(calbindin); supplementation increases calcium absorption by "
+            "up to 40%."
+        ),
+        evidence_tier="🟡",
+        recommendation=(
+            "Pairing is appropriate. Maintain adequate vitamin D status when "
+            "supplementing calcium."
+        ),
+    ),
+    Interaction(
+        compound_a="citrulline", compound_b="beta-alanine",
+        severity="synergistic",
+        mechanism=(
+            "Citrulline increases nitric oxide / blood flow; beta-alanine "
+            "raises intramuscular carnosine for acid buffering. Mechanisms "
+            "are independent and complementary."
+        ),
+        evidence_tier="🟡",
+        recommendation=(
+            "Combination is well-tolerated and frequently stacked pre-workout."
+        ),
+    ),
+    Interaction(
+        compound_a="omega-3", compound_b="vitamin d",
+        severity="synergistic",
+        mechanism=(
+            "Vitamin D is fat-soluble. Co-ingestion with the fat from omega-3 "
+            "fish oil improves vitamin D bioavailability."
+        ),
+        evidence_tier="🟡",
+        recommendation=(
+            "Take vitamin D with the meal that contains your omega-3 dose."
+        ),
+    ),
+    Interaction(
+        compound_a="whey protein", compound_b="creatine",
+        severity="synergistic",
+        mechanism=(
+            "Insulin response from whey protein may enhance creatine uptake "
+            "into muscle."
+        ),
+        evidence_tier="🟡",
+        recommendation="Frequent post-workout pairing; well-tolerated.",
+    ),
+    Interaction(
+        compound_a="whey protein", compound_b="bcaas",
+        severity="caution",
+        mechanism=(
+            "Whey protein already contains the three branched-chain amino "
+            "acids in their natural ratio. Additional BCAA supplementation "
+            "alongside whey is largely redundant."
+        ),
+        evidence_tier="🟡",
+        recommendation=(
+            "Drop standalone BCAAs if already taking whey post-workout; may "
+            "waste budget without performance gain."
+        ),
+    ),
 ]
 
 # Build lookup index for fast searching
