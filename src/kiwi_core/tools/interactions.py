@@ -18,6 +18,7 @@ Claude Opus 4.6 with adaptive thinking for evidence synthesis.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from typing import Literal
 
@@ -38,6 +39,39 @@ SEVERITY_EMOJI = {
 SEVERITY_ORDER = {"avoid": 0, "caution": 1, "monitor": 2, "safe": 3, "synergistic": 4}
 
 
+# Anything outside [a-z0-9] gets squashed to underscores so the resulting key
+# is safe as both a JSON object key and a next-intl namespace path component.
+_KEY_NORM_RE = re.compile(r"[^a-z0-9]+")
+
+
+def _make_key(compound_a: str, compound_b: str, field: str) -> str:
+    """Generate the canonical i18n lookup key for one (pair, field) tuple.
+
+    Used by next-intl on the Calsanova frontend (and downstream consumers
+    Kiwi / RWQL if they wire localization later) to look up the localized
+    `mechanism` or `recommendation` string for a given Interaction row.
+
+    Algorithm — deterministic + idempotent + alphabetization-stable:
+      1. lowercase both compound strings, strip whitespace
+      2. replace any char outside [a-z0-9] with `_`
+      3. collapse runs of `_` to a single `_`, strip leading/trailing `_`
+      4. sort the two normalized strings alphabetically (so the key for
+         (caffeine, melatonin) equals the key for (melatonin, caffeine))
+      5. join the two with `__`, append `__{field}`
+
+    Examples:
+      _make_key("Caffeine", "L-Theanine", "mechanism")
+        → "caffeine__l_theanine__mechanism"
+      _make_key("vitamin c", "iron", "recommendation")
+        → "iron__vitamin_c__recommendation"
+    """
+    def _norm(s: str) -> str:
+        s = _KEY_NORM_RE.sub("_", s.lower().strip())
+        return s.strip("_")
+    a, b = sorted([_norm(compound_a), _norm(compound_b)])
+    return f"{a}__{b}__{field}"
+
+
 @dataclass
 class Interaction:
     compound_a: str
@@ -47,6 +81,18 @@ class Interaction:
     evidence_tier: str   # 🟢 / 🟡 / 🟠 / 🔵
     recommendation: str
     sources: list[str] = field(default_factory=list)
+    # i18n lookup keys — auto-generated in __post_init__ when left empty.
+    # Frontends (e.g. Calsanova's next-intl) use these to render the
+    # localized mechanism/recommendation strings; English values above
+    # remain the canonical source + dev fallback.
+    mechanism_key: str = ""
+    recommendation_key: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.mechanism_key:
+            self.mechanism_key = _make_key(self.compound_a, self.compound_b, "mechanism")
+        if not self.recommendation_key:
+            self.recommendation_key = _make_key(self.compound_a, self.compound_b, "recommendation")
 
     def display(self) -> str:
         emoji = SEVERITY_EMOJI[self.severity]
